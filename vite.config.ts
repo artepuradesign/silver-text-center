@@ -71,7 +71,7 @@ export default defineConfig(({ mode }) => ({
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         // Aumenta o limite para permitir precache de bundles maiores
-        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MiB
       },
     }),
   ].filter(Boolean),
