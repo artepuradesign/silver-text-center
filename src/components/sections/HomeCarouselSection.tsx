@@ -198,7 +198,7 @@ const HomeCarouselSection: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className={cn(
-                  "flex items-center gap-0 max-w-md mx-auto md:mx-0 rounded-2xl overflow-hidden",
+                  "flex items-center gap-0 max-w-md rounded-2xl overflow-hidden",
                   isMatrix
                     ? "bg-black/50 border border-green-500/20"
                     : "bg-white/10 border border-white/20"
