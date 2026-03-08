@@ -144,13 +144,13 @@ const UserWalletDropdown = ({ onLogout }: UserWalletDropdownProps) => {
         <>
           {/* Dark Overlay */}
           <div 
-            className="fixed inset-0 bg-black/60 dark:bg-black/80 z-[800] backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 dark:bg-black/80 z-[10000] backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
           />
           
           {/* Centered Dropdown */}
           <div 
-            className="fixed inset-0 z-[900] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[10001] flex items-center justify-center p-4"
             onClick={(e) => { if (e.target === e.currentTarget) setIsOpen(false); }}
           >
             <div 
