@@ -212,7 +212,7 @@ const HomeCarouselSection: React.FC = () => {
                   <Search className="h-4 w-4 text-white/50 shrink-0" />
                   <input
                     type="text"
-                    placeholder="Digite um CPF, CNPJ ou nome..."
+                    placeholder="Digite CPF ou Nome Completo"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                     className="flex-1 bg-transparent border-none outline-none text-sm text-white placeholder:text-white/40 py-3.5"
@@ -221,12 +221,12 @@ const HomeCarouselSection: React.FC = () => {
                 <button
                   type="submit"
                   className={cn(
-                    "flex items-center justify-center text-sm font-semibold text-white transition-colors shrink-0",
+                    "flex items-center justify-center text-sm font-semibold transition-colors shrink-0",
                     "sm:h-full sm:px-5 sm:py-3.5 sm:gap-2",
                     "h-10 w-10 rounded-full sm:rounded-none sm:w-auto my-auto mr-2 sm:mr-0",
                     isMatrix
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-primary hover:bg-primary/80"
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-primary hover:bg-primary/80 text-primary-foreground dark:bg-primary dark:hover:bg-primary/80 dark:text-primary-foreground"
                   )}
                 >
                   <span className="hidden sm:inline">Consultar</span>
