@@ -301,25 +301,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     try {
       console.log('🔄 [AUTH] Iniciando logout MANUAL...');
-      
-      const sessionToken = cookieUtils.get('session_token');
-      
-      if (sessionToken) {
-        try {
-          await authApiService.logout(sessionToken);
-          console.log('✅ [AUTH] Logout realizado no servidor');
-        } catch (error) {
-          console.warn('⚠️ [AUTH] Erro no logout do servidor:', error);
-        }
-      }
-      
+
+      const sessionToken = cookieUtils.get('session_token') || cookieUtils.get('api_session_token');
+      const userId = cookieUtils.get('current_user_id');
+
       console.log('🧹 [AUTH] Limpando todos os dados locais...');
-      
+
       cookieUtils.remove('session_token');
+      cookieUtils.remove('api_session_token');
       cookieUtils.remove('current_user_id');
       cookieUtils.remove('auth_user');
-      
-      const userId = cookieUtils.get('current_user_id');
+
       if (userId) {
         localStorage.removeItem(`last_activity_${userId}`);
       }
@@ -327,15 +319,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('session_token');
       localStorage.removeItem('current_user_id');
       localStorage.removeItem('token_last_validation');
-      
+
       setUser(null);
       setProfile(null);
       setSession(null);
       setIsSupport(false);
-      
-      console.log('✅ [AUTH] Logout completo');
-      
-    } catch (error) {  
+
+      console.log('✅ [AUTH] Logout local completo');
+
+      if (sessionToken) {
+        authApiService.logout(sessionToken)
+          .then(() => console.log('✅ [AUTH] Logout realizado no servidor'))
+          .catch((error) => console.warn('⚠️ [AUTH] Erro no logout do servidor:', error));
+      }
+    } catch (error) {
       console.error('❌ [AUTH] Erro no logout:', error);
     }
   };

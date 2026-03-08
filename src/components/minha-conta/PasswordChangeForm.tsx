@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cookieUtils } from '@/utils/cookieUtils';
 
 const PasswordChangeForm = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false
@@ -47,7 +49,7 @@ const PasswordChangeForm = () => {
 
     setLoading(true);
     try {
-      const sessionToken = cookieUtils.get('session_token');
+      const sessionToken = cookieUtils.get('session_token') || cookieUtils.get('api_session_token');
       
       if (!sessionToken || sessionToken === 'authenticated') {
         toast.error('Sessão expirada. Faça login novamente.');
@@ -78,18 +80,13 @@ const PasswordChangeForm = () => {
         const result = await response.json();
         console.log('✅ [PASSWORD_CHANGE] Success response:', result);
         if (result.success) {
-          // Redirecionar PRIMEIRO, antes de limpar sessão
           toast.success('Senha alterada com sucesso! Redirecionando...');
-          
-          // Redirecionar imediatamente para evitar tela branca
-          setTimeout(() => {
-            cookieUtils.remove('session_token');
-            cookieUtils.remove('api_session_token');
-            cookieUtils.remove('current_user_id');
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.replace('/login');
-          }, 800);
+
+          await signOut();
+          cookieUtils.remove('api_session_token');
+          sessionStorage.clear();
+          navigate('/login', { replace: true });
+          return;
         } else {
           toast.error(result.message || 'Erro ao alterar senha');
         }
