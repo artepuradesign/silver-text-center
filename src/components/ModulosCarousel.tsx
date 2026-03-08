@@ -194,7 +194,7 @@ const ModulosCarousel = () => {
             ]}
             className="w-full max-w-full"
           >
-            <CarouselContent className="-ml-0.5 md:-ml-1">
+            <CarouselContent className="-ml-0.5">
               {modules.map((module, index) => {
                 const template = getPanelTemplate(module.panel_id);
                 const originalPrice = parseFloat(module.price?.toString().replace(',', '.') || '0');
