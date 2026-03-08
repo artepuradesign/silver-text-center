@@ -62,7 +62,7 @@ const PasswordChangeForm = () => {
       console.log('🔄 [PASSWORD_CHANGE] Enviando requisição para alterar senha...');
       console.log('🔄 [PASSWORD_CHANGE] Request data:', { current_password: '[HIDDEN]', new_password: '[HIDDEN]' });
 
-      const response = await fetch('https://api.artepuradesign.com.br/auth/change-password', {
+      const response = await fetch('https://api.apipainel.com.br/auth/change-password', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionToken}`,
