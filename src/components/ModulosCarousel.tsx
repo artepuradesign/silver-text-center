@@ -194,7 +194,7 @@ const ModulosCarousel = () => {
             ]}
             className="w-full max-w-full"
           >
-            <CarouselContent className="-ml-px">
+            <CarouselContent className="ml-0">
               {modules.map((module, index) => {
                 const template = getPanelTemplate(module.panel_id);
                 const originalPrice = parseFloat(module.price?.toString().replace(',', '.') || '0');
@@ -206,27 +206,25 @@ const ModulosCarousel = () => {
                 return (
                   <CarouselItem 
                     key={module.id} 
-                    className="basis-[42%] sm:basis-[30%] md:basis-[23%] lg:basis-[19%] xl:basis-[16%] pl-px pr-px"
+                    className="basis-[42%] sm:basis-[30%] md:basis-[23%] lg:basis-[19%] xl:basis-[16%] px-0"
                   >
-                    <div>
-                      <div className="max-w-[140px] mx-auto">
-                          <ModuleCardTemplates
-                            module={{
-                              title: module.title,
-                              description: module.description,
-                              price: formatPrice(shouldShowDiscount ? discountedPrice : originalPrice),
-                              originalPrice: shouldShowDiscount ? formatPrice(originalPrice) : undefined,
-                              discountPercentage: shouldShowDiscount ? discountPercentage : undefined,
-                              status: module.is_active ? 'ativo' : 'inativo',
-                              operationalStatus: module.operational_status === 'maintenance' ? 'manutencao' : module.operational_status,
-                              iconSize: 'medium',
-                              showDescription: true,
-                              icon: module.icon,
-                              color: module.color
-                            }}
-                            template={template}
-                          />
-                      </div>
+                    <div className="w-full">
+                      <ModuleCardTemplates
+                        module={{
+                          title: module.title,
+                          description: module.description,
+                          price: formatPrice(shouldShowDiscount ? discountedPrice : originalPrice),
+                          originalPrice: shouldShowDiscount ? formatPrice(originalPrice) : undefined,
+                          discountPercentage: shouldShowDiscount ? discountPercentage : undefined,
+                          status: module.is_active ? 'ativo' : 'inativo',
+                          operationalStatus: module.operational_status === 'maintenance' ? 'manutencao' : module.operational_status,
+                          iconSize: 'medium',
+                          showDescription: true,
+                          icon: module.icon,
+                          color: module.color
+                        }}
+                        template={template}
+                      />
                     </div>
                   </CarouselItem>
                 );
