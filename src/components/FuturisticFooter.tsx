@@ -51,7 +51,7 @@ const FuturisticFooter = () => {
                   { icon: Award, label: 'Planos', desc: 'Escolha o ideal', to: '/pricing', color: 'fuchsia' },
                   { icon: Shield, label: 'Suporte', desc: 'Ajuda especializada', to: '/dashboard/suporte', color: 'cyan' },
                 ].map((item, i) => (
-                  <Link key={i} to={item.to} className="group flex items-center gap-2 p-2 rounded-lg border border-white/15 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:border-white/25 transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)]">
+                  <Link key={i} to={item.to} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
                     <div className={`flex items-center justify-center w-7 h-7 rounded-md bg-${item.color}-500/10`}>
                       <item.icon size={14} className={`text-${item.color}-400`} />
                     </div>
@@ -75,7 +75,7 @@ const FuturisticFooter = () => {
                   { icon: Mail, label: 'Email', desc: 'contato@apipainel.com.br', color: 'fuchsia' },
                   { icon: Clock, label: 'Suporte', desc: '24h/7 dias', color: 'cyan' },
                 ].map((item, i) => (
-                  <div key={i} className="group flex items-center gap-2 p-2 rounded-lg border border-white/15 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:border-white/25 transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)]">
+                  <div key={i} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
                     <div className={`flex items-center justify-center w-7 h-7 rounded-md bg-${item.color}-500/10`}>
                       <item.icon size={14} className={`text-${item.color}-400`} />
                     </div>
@@ -99,7 +99,7 @@ const FuturisticFooter = () => {
                   { icon: Shield, label: '100% Seguro', desc: 'Criptografia SSL', color: 'emerald' },
                   { icon: Award, label: 'Certificado', desc: 'Conformidade LGPD', color: 'fuchsia' },
                 ].map((item, i) => (
-                  <div key={i} className="group flex items-center gap-2 p-2 rounded-lg border border-white/15 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:border-white/25 transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.1)]">
+                  <div key={i} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
                     <div className={`flex items-center justify-center w-7 h-7 rounded-md bg-${item.color}-500/10`}>
                       <item.icon size={14} className={`text-${item.color}-400`} />
                     </div>
