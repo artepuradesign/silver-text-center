@@ -49,7 +49,7 @@ const PasswordChangeForm = () => {
 
     setLoading(true);
     try {
-      const sessionToken = cookieUtils.get('session_token');
+      const sessionToken = cookieUtils.get('session_token') || cookieUtils.get('api_session_token');
       
       if (!sessionToken || sessionToken === 'authenticated') {
         toast.error('Sessão expirada. Faça login novamente.');
