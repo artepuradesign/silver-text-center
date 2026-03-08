@@ -436,7 +436,7 @@ const CadastrarCPF = () => {
         
         console.log(`📤 [FOTO_UPLOAD] Enviando ${photoData.key} para servidor...`);
         
-        const response = await fetch('https://api.artepuradesign.com.br/upload-photo.php', {
+        const response = await fetch('https://api.apipainel.com.br/upload-photo.php', {
           method: 'POST',
           body: formData
         });

@@ -205,7 +205,7 @@ export const useMinhaContaData = () => {
       
       console.log('🔍 [DEBUG] Request data:', requestData);
       
-      const response = await fetch('https://api.artepuradesign.com.br/auth/update-profile', {
+      const response = await fetch('https://api.apipainel.com.br/auth/update-profile', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${sessionToken}`,

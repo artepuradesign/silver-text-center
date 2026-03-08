@@ -172,7 +172,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Validar token em background
           try {
             console.log('🔄 [AUTH] Validando token em background...');
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://api.artepuradesign.com.br'}/auth/validate-token`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://api.apipainel.com.br'}/auth/validate-token`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${sessionToken}`,

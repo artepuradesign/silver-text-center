@@ -17,7 +17,7 @@ export const debugAuth = {
     console.log('🔑 [DEBUG_AUTH] Token a ser testado:', finalToken.substring(0, 25) + '...');
     
     try {
-      const response = await fetch('https://api.artepuradesign.com.br/wallet/balance', {
+      const response = await fetch('https://api.apipainel.com.br/wallet/balance', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export const debugAuth = {
     }
     
     try {
-      const response = await fetch('https://api.artepuradesign.com.br/auth/login', {
+      const response = await fetch('https://api.apipainel.com.br/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

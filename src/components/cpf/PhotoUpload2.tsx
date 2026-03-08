@@ -114,7 +114,7 @@ const PhotoUpload2 = forwardRef<PhotoUpload2Ref, PhotoUpload2Props>(({
       formData.append('cpf', cpf.replace(/\D/g, ''));
       formData.append('type', 'foto2');
 
-      const response = await fetch('https://api.artepuradesign.com.br/upload-photo.php', {
+      const response = await fetch('https://api.apipainel.com.br/upload-photo.php', {
         method: 'POST',
         body: formData,
       });
