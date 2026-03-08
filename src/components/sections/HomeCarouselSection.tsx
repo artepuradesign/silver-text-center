@@ -132,7 +132,7 @@ const HomeCarouselSection: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl w-full py-16 sm:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: Text + Search */}
-            <div className="space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start">
+            <div className="space-y-6 text-left flex flex-col items-start">
               {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -198,7 +198,7 @@ const HomeCarouselSection: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className={cn(
-                  "flex items-center gap-0 max-w-md mx-auto md:mx-0 rounded-2xl overflow-hidden",
+                  "flex items-center gap-0 max-w-md rounded-2xl overflow-hidden",
                   isMatrix
                     ? "bg-black/50 border border-green-500/20"
                     : "bg-white/10 border border-white/20"
