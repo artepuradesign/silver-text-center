@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cookieUtils } from '@/utils/cookieUtils';
 
 const PasswordChangeForm = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false
