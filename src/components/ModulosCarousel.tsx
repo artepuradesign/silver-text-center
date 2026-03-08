@@ -208,8 +208,8 @@ const ModulosCarousel = () => {
                     key={module.id} 
                     className="basis-[42%] sm:basis-[30%] md:basis-[23%] lg:basis-[19%] xl:basis-[16%] pl-px pr-px"
                   >
-                    <div className="p-px">
-                      <div className="max-w-[150px] mx-auto">
+                    <div>
+                      <div className="max-w-[140px] mx-auto">
                           <ModuleCardTemplates
                             module={{
                               title: module.title,
