@@ -144,7 +144,7 @@ const UserWalletDropdown = ({ onLogout }: UserWalletDropdownProps) => {
         <>
           {/* Dark Overlay */}
           <div 
-            className="fixed inset-0 bg-black/60 dark:bg-black/80 z-[800] backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 dark:bg-black/80 z-[10000] backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
           />
           
