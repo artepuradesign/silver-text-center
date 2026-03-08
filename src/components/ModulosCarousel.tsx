@@ -194,7 +194,7 @@ const ModulosCarousel = () => {
             ]}
             className="w-full max-w-full"
           >
-            <CarouselContent className="-ml-0.5 md:-ml-1">
+            <CarouselContent className="-ml-0.5">
               {modules.map((module, index) => {
                 const template = getPanelTemplate(module.panel_id);
                 const originalPrice = parseFloat(module.price?.toString().replace(',', '.') || '0');
@@ -206,9 +206,9 @@ const ModulosCarousel = () => {
                 return (
                   <CarouselItem 
                     key={module.id} 
-                    className="basis-[45%] sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 pl-1 pr-1"
+                    className="basis-[45%] sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 pl-0.5 pr-0.5"
                   >
-                    <div className="p-0.5">
+                    <div className="p-px">
                       <div className="max-w-[180px] mx-auto">
                           <ModuleCardTemplates
                             module={{
