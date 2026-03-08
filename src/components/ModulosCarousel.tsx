@@ -206,7 +206,7 @@ const ModulosCarousel = () => {
                 return (
                   <CarouselItem 
                     key={module.id} 
-                    className="basis-[42%] sm:basis-[28%] md:basis-[22%] lg:basis-[18%] xl:basis-[15%] pl-0.5 pr-0.5"
+                    className="basis-[42%] sm:basis-[30%] md:basis-[23%] lg:basis-[19%] xl:basis-[16%] pl-px pr-px"
                   >
                     <div className="p-px">
                       <div className="max-w-[150px] mx-auto">
