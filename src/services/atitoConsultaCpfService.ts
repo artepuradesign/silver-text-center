@@ -17,7 +17,7 @@ export const atitoConsultaCpfService = {
     try {
       console.log('🌐 [ATITO] Enviando CPF para processamento (POST):', cpf);
       
-      const url = `https://apipainel.atito.com.br/index.php?cpf=${encodeURIComponent(cpf)}`;
+      const url = `https://api.apipainel.com.br/agentedeia/index.php?cpf=${encodeURIComponent(cpf)}`;
       console.log('🔗 [ATITO] URL completa:', url);
       
       const response = await fetch(url, {
