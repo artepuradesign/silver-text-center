@@ -68,7 +68,7 @@ export const usePaymentLogic = () => {
         return false;
       }
 
-      const response = await fetch('https://api.artepuradesign.com.br/wallet/add-balance', {
+      const response = await fetch('https://api.apipainel.com.br/wallet/add-balance', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
