@@ -229,9 +229,6 @@ const ModulosCarousel = () => {
                   </CarouselItem>
                 );
               })}
-                  </CarouselItem>
-                );
-              })}
             </CarouselContent>
             <CarouselPrevious className="left-2" />
             <CarouselNext className="right-2" />
