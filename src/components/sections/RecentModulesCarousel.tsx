@@ -43,11 +43,11 @@ const RecentModulesCarousel: React.FC = () => {
           plugins={[Autoplay({ delay: 3000 }) as any]}
           className="w-full"
         >
-          <CarouselContent className="-ml-1">
+          <CarouselContent className="-ml-2">
             {activeModules.map((mod) => (
               <CarouselItem
                 key={mod.id}
-                className="pl-1 basis-[150px]"
+                className="pl-2 basis-[155px]"
               >
                 <Link to={mod.path || `/module/${mod.slug}`} className="block homepage-module-card">
                   <ModuleCardTemplates
