@@ -75,6 +75,17 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ].filter(Boolean),
+  build: {
+    chunkSizeWarningLimit: 12000,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress mixed dynamic/static import warnings
+        if (warning.code === 'PLUGIN_WARNING' && warning.message?.includes('dynamically imported by')) return;
+        if (warning.plugin === 'vite:reporter' && warning.message?.includes('dynamically imported by')) return;
+        warn(warning);
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
