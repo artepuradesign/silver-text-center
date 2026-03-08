@@ -54,7 +54,7 @@ export const useApiAccessLogs = () => {
       }
 
       // Tentar registrar via API
-      const response = await fetch('https://api.artepuradesign.com.br/access-logs', {
+      const response = await fetch('https://api.apipainel.com.br/access-logs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
