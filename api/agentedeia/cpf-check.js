@@ -6,6 +6,8 @@ const { NewMessage } = require("telegram/events");
 const input = require("input");
 const axios = require("axios");
 const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 // ================= CONFIG =================
 const apiId = 25531373;
@@ -14,7 +16,9 @@ const stringSession = new StringSession("1AQAOMTQ5LjE1NC4xNzUuNTkBu3KZRw/EaV8Pye
 const TARGET_GROUP = "paineljsisis";
 const RESULT_BOT = "FindexGrupo_Bot";
 const N8N_WEBHOOK = "https://n8n.apipainel.com.br/webhook/telegram";
-const LOG_FILE = "debug.log";
+
+// Log file - usar /tmp para evitar problemas de permissão quando executado pelo PHP
+const LOG_FILE = path.join(os.tmpdir(), "cpf-check-debug.log");
 // =========================================
 
 function log(msg, data = "") {
@@ -22,13 +26,24 @@ function log(msg, data = "") {
     `[${new Date().toISOString()}] ${msg} ` +
     (data ? JSON.stringify(data) : "") +
     "\n";
-  fs.appendFileSync(LOG_FILE, line);
+  try {
+    fs.appendFileSync(LOG_FILE, line);
+  } catch (e) {
+    // Ignora erro de escrita no log para não travar o script
+  }
   console.log(msg, data || "");
 }
 
 let cpfAtual = null;
 let linkAberto = false;
 let enviado = false;
+
+// Timeout de segurança: encerrar após 60s para não travar o PHP
+const TIMEOUT_MS = 60000;
+setTimeout(() => {
+  log("⏰ Timeout atingido, encerrando...");
+  process.exit(1);
+}, TIMEOUT_MS);
 
 (async () => {
   log("🚀 Iniciando Telegram");

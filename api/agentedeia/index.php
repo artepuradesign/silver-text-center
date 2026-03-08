@@ -31,14 +31,18 @@ $cpf = preg_replace('/\D/', '', $cpf);
 // Caminho do script Node.js
 $scriptPath = __DIR__ . "/cpf-check.js";
 
-// Executa o comando e captura saída e erros
-$cmd = "node $scriptPath $cpf";
-$output = shell_exec($cmd . " 2>&1");
+// Executar em BACKGROUND (nohup + &) para não bloquear o PHP
+// O script Node roda assincronamente, conecta ao Telegram, pega o link e envia ao n8n
+$logFile = sys_get_temp_dir() . "/cpf-check-{$cpf}.log";
+$cmd = "nohup node " . escapeshellarg($scriptPath) . " " . escapeshellarg($cpf) . " > " . escapeshellarg($logFile) . " 2>&1 &";
+
+exec($cmd);
 
 echo json_encode([
     "status" => true,
     "cpf" => $cpf,
-    "exec_output" => $output
+    "message" => "CPF enviado para processamento em background",
+    "log_file" => $logFile
 ]);
 
 ?>
