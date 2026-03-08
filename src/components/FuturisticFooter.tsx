@@ -98,7 +98,6 @@ const FuturisticFooter = () => {
                 {[
                   { icon: Shield, label: '100% Seguro', desc: 'Criptografia SSL', color: 'emerald' },
                   { icon: Award, label: 'Certificado', desc: 'Conformidade LGPD', color: 'fuchsia' },
-                  { icon: Zap, label: 'Alta Performance', desc: '99.9% uptime', color: 'cyan' },
                 ].map((item, i) => (
                   <div key={i} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
                     <div className={`flex items-center justify-center w-7 h-7 rounded-md bg-${item.color}-500/10`}>
