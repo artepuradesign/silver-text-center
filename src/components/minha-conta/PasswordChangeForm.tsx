@@ -80,13 +80,15 @@ const PasswordChangeForm = () => {
         if (result.success) {
           toast.success('Senha alterada com sucesso! Redirecionando para o login...');
           
+          // Limpar sessão completa
           cookieUtils.remove('session_token');
           cookieUtils.remove('api_session_token');
           cookieUtils.remove('current_user_id');
           localStorage.clear();
+          sessionStorage.clear();
           
           setTimeout(() => {
-            window.location.href = '/login';
+            window.location.replace('/login');
           }, 2000);
         } else {
           toast.error(result.message || 'Erro ao alterar senha');
