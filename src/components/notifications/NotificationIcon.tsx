@@ -109,7 +109,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent className="w-80 p-0 z-[10002]" align="end">
         <div className="border-b p-4">
           <h3 className="font-semibold">Notificações</h3>
           <p className="text-sm text-muted-foreground">
