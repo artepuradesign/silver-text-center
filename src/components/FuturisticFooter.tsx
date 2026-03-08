@@ -40,27 +40,30 @@ const FuturisticFooter = () => {
               </div>
             </div>
 
-            {/* Links */}
+            {/* Links Rápidos */}
             <div>
               <h3 className="text-white font-semibold text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
                 Links Rápidos
               </h3>
-              <ul className="space-y-2">
+              <div className="space-y-2">
                 {[
-                  { label: 'Documentação', to: '/docs' },
-                  { label: 'Planos', to: '/pricing' },
-                  { label: 'API', to: '/api' },
-                  { label: 'Suporte', to: '/dashboard/suporte' },
-                ].map((link) => (
-                  <li key={link.to}>
-                    <Link to={link.to} className="group flex items-center text-gray-400 hover:text-cyan-400 transition-all duration-300 text-sm">
-                      <ArrowUpRight size={14} className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {link.label}
-                    </Link>
-                  </li>
+                  { icon: Globe, label: 'Documentação', desc: 'Guias e referências', to: '/docs', color: 'cyan' },
+                  { icon: Award, label: 'Planos', desc: 'Escolha o ideal', to: '/pricing', color: 'fuchsia' },
+                  { icon: Zap, label: 'API', desc: 'Integração rápida', to: '/api', color: 'emerald' },
+                  { icon: Shield, label: 'Suporte', desc: 'Ajuda especializada', to: '/dashboard/suporte', color: 'cyan' },
+                ].map((item, i) => (
+                  <Link key={i} to={item.to} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-md bg-${item.color}-500/10`}>
+                      <item.icon size={14} className={`text-${item.color}-400`} />
+                    </div>
+                    <div>
+                      <span className="text-gray-800 dark:text-white text-sm font-medium">{item.label}</span>
+                      <p className="text-gray-500 dark:text-gray-500 text-xs">{item.desc}</p>
+                    </div>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
 
             {/* Contato */}
@@ -69,26 +72,22 @@ const FuturisticFooter = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.6)]" />
                 Contato
               </h3>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20">
-                    <Mail size={14} className="text-fuchsia-400" />
+              <div className="space-y-2">
+                {[
+                  { icon: Mail, label: 'Email', desc: 'contato@apipainel.com.br', color: 'fuchsia' },
+                  { icon: Clock, label: 'Suporte', desc: '24h/7 dias', color: 'cyan' },
+                ].map((item, i) => (
+                  <div key={i} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-md bg-${item.color}-500/10`}>
+                      <item.icon size={14} className={`text-${item.color}-400`} />
+                    </div>
+                    <div>
+                      <span className="text-gray-800 dark:text-white text-sm font-medium">{item.label}</span>
+                      <p className="text-gray-500 dark:text-gray-500 text-xs">{item.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-gray-500 text-xs">Email</span>
-                    <p className="text-gray-300 text-sm">contato@apipainel.com.br</p>
-                  </div>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                    <Clock size={14} className="text-cyan-400" />
-                  </div>
-                  <div>
-                    <span className="text-gray-500 text-xs">Suporte</span>
-                    <p className="text-gray-300 text-sm">24h/7 dias</p>
-                  </div>
-                </li>
-              </ul>
+                ))}
+              </div>
             </div>
 
             {/* Recursos */}
