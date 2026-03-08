@@ -164,6 +164,8 @@ const LoginRenner = () => {
       const next = new Set(prev);
       if (next.has(loginId)) next.delete(loginId);
       else next.add(loginId);
+      // Sincroniza desiredQuantity com a quantidade selecionada
+      setDesiredQuantity(next.size);
       return next;
     });
   };
