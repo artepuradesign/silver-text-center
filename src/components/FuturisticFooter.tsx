@@ -48,9 +48,7 @@ const FuturisticFooter = () => {
               </h3>
               <div className="space-y-2">
                 {[
-                  { icon: Globe, label: 'Documentação', desc: 'Guias e referências', to: '/docs', color: 'cyan' },
                   { icon: Award, label: 'Planos', desc: 'Escolha o ideal', to: '/pricing', color: 'fuchsia' },
-                  { icon: Zap, label: 'API', desc: 'Integração rápida', to: '/api', color: 'emerald' },
                   { icon: Shield, label: 'Suporte', desc: 'Ajuda especializada', to: '/dashboard/suporte', color: 'cyan' },
                 ].map((item, i) => (
                   <Link key={i} to={item.to} className="group flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.03] hover:bg-gray-50 dark:hover:bg-white/[0.06] dark:hover:border-white/10 transition-all duration-300">
