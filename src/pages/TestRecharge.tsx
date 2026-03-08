@@ -20,7 +20,7 @@ const TestRecharge: React.FC = () => {
     
     try {
       // API call to create a test recharge
-      const response = await fetch('https://api.artepuradesign.com.br/recharge', {
+      const response = await fetch('https://api.apipainel.com.br/recharge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

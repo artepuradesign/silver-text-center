@@ -117,7 +117,7 @@ export const usePaymentLogic = () => {
         return false;
       }
 
-      const response = await fetch('https://api.artepuradesign.com.br/plans/purchase', {
+      const response = await fetch('https://api.apipainel.com.br/plans/purchase', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

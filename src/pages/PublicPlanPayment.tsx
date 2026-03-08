@@ -289,7 +289,7 @@ const PublicPlanPayment = () => {
     try {
       // 1. FORÇAR verificação de pagamentos pendentes no backend
       console.log('🔍 [PAGUEI] Forçando verificação de pagamentos pendentes...');
-      const checkResponse = await fetch(`https://api.artepuradesign.com.br/mercadopago/check-pending-payments`, {
+      const checkResponse = await fetch(`https://api.apipainel.com.br/mercadopago/check-pending-payments`, {
         method: 'GET'
       });
 
