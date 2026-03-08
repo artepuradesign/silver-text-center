@@ -78,18 +78,18 @@ const PasswordChangeForm = () => {
         const result = await response.json();
         console.log('✅ [PASSWORD_CHANGE] Success response:', result);
         if (result.success) {
-          toast.success('Senha alterada com sucesso! Redirecionando para o login...');
+          // Redirecionar PRIMEIRO, antes de limpar sessão
+          toast.success('Senha alterada com sucesso! Redirecionando...');
           
-          // Limpar sessão completa
-          cookieUtils.remove('session_token');
-          cookieUtils.remove('api_session_token');
-          cookieUtils.remove('current_user_id');
-          localStorage.clear();
-          sessionStorage.clear();
-          
+          // Redirecionar imediatamente para evitar tela branca
           setTimeout(() => {
+            cookieUtils.remove('session_token');
+            cookieUtils.remove('api_session_token');
+            cookieUtils.remove('current_user_id');
+            localStorage.clear();
+            sessionStorage.clear();
             window.location.replace('/login');
-          }, 2000);
+          }, 800);
         } else {
           toast.error(result.message || 'Erro ao alterar senha');
         }
