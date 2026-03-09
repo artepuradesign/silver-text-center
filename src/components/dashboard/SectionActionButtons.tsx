@@ -49,21 +49,75 @@ const exportVisualPdf = async (
   toast.info("Gerando PDF visual, aguarde...");
 
   try {
-    // Capture the entire container as a canvas
     const canvas = await html2canvas(container, {
-      scale: 2, // Higher quality
+      scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
       logging: false,
-      windowWidth: container.scrollWidth,
+      windowWidth: 900,
       scrollY: -window.scrollY,
       onclone: (clonedDoc) => {
-        // Ensure all content is visible in the clone
         const clonedEl = clonedDoc.body.querySelector('[data-pdf-container]') as HTMLElement;
         if (clonedEl) {
           clonedEl.style.overflow = 'visible';
           clonedEl.style.maxHeight = 'none';
+          clonedEl.style.width = '860px';
+          clonedEl.style.padding = '16px';
+          clonedEl.style.fontSize = '14px';
+
+          // Force all cards/content to be full width and visible
+          clonedEl.querySelectorAll<HTMLElement>('.overflow-hidden, .overflow-x-auto, .overflow-x-hidden').forEach(el => {
+            el.style.overflow = 'visible';
+          });
+
+          // Ensure grid columns render properly for PDF
+          clonedEl.querySelectorAll<HTMLElement>('[class*="grid"]').forEach(el => {
+            el.style.display = 'grid';
+            el.style.width = '100%';
+          });
+
+          // Fix text alignment inside field containers
+          clonedEl.querySelectorAll<HTMLElement>('input, [class*="border-b"], [class*="border-input"]').forEach(el => {
+            el.style.textAlign = 'left';
+            el.style.paddingLeft = '8px';
+          });
+
+          // --- Fotos: replace with count-only summary ---
+          const fotosSection = clonedEl.querySelector('#fotos-section') as HTMLElement;
+          if (fotosSection) {
+            // Get the count from the badge
+            const badge = fotosSection.querySelector('.absolute.-top-2') as HTMLElement;
+            const countText = badge?.textContent?.trim() || '0';
+            const count = parseInt(countText, 10) || 0;
+
+            if (count > 0) {
+              fotosSection.innerHTML = `
+                <div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#f0fdf4; border-color:#bbf7d0;">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <span style="font-size:18px;">📷</span>
+                    <strong style="font-size:15px;">Fotos</strong>
+                    <span style="background:#16a34a; color:white; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:8px;">ONLINE</span>
+                  </div>
+                  <p style="color:#374151; font-size:13px; margin:0;">${count} foto(s) encontrada(s)</p>
+                </div>
+              `;
+            } else {
+              fotosSection.style.display = 'none';
+            }
+          }
+
+          // --- Score: hide if no data ---
+          const scoreSection = clonedEl.querySelector('#score-section') as HTMLElement;
+          if (scoreSection) {
+            const scoreText = scoreSection.textContent || '';
+            // If score is 0 or empty, hide
+            const scoreMatch = scoreText.match(/(\d+)/);
+            const scoreVal = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
+            if (scoreVal <= 0) {
+              scoreSection.style.display = 'none';
+            }
+          }
         }
       }
     });
