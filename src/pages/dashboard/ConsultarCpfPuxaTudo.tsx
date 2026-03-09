@@ -3069,7 +3069,7 @@ Todos os direitos reservados.`;
           hasData ? "border-success-border bg-success-subtle" : undefined;
         
         return (
-        <div ref={resultRef} className="space-y-6 w-full max-w-full overflow-hidden">
+        <div ref={resultRef} data-pdf-container className="space-y-6 w-full max-w-full overflow-hidden">
            {/* Header com status de sucesso e ações */}
           <Card className="border-success-border w-full overflow-hidden">
             <CardHeader className="bg-success-subtle p-4 md:p-6">
@@ -3090,6 +3090,7 @@ Todos os direitos reservados.`;
                        copied: "Relatório completo copiado!",
                        exportedTxt: "Relatório completo exportado com sucesso!",
                      }}
+                     visualContainerRef={resultRef}
                    />
                  </div>
               </div>

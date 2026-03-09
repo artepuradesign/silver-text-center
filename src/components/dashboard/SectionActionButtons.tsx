@@ -1,8 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Copy, FileText, FileDown, MessageCircle } from "lucide-react";
+import { Copy, FileText, FileDown, MessageCircle, Image } from "lucide-react";
 import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 type SectionActionButtonsProps = {
   /** Returns the plain-text content used for copy/export/share */
@@ -21,6 +22,8 @@ type SectionActionButtonsProps = {
     exportedTxt?: string;
     exportedPdf?: string;
   };
+  /** When provided, the PDF button captures this DOM element visually */
+  visualContainerRef?: React.RefObject<HTMLDivElement>;
 };
 
 const openExternalShare = (url: string) => {
@@ -37,19 +40,140 @@ const downloadTxt = (text: string, filename: string) => {
   document.body.removeChild(element);
 };
 
-const exportPdf = (
+// --- Visual PDF export using html2canvas ---
+const exportVisualPdf = async (
+  container: HTMLDivElement,
+  filename: string,
+  options?: SectionActionButtonsProps["pdf"]
+) => {
+  toast.info("Gerando PDF visual, aguarde...");
+
+  try {
+    // Capture the entire container as a canvas
+    const canvas = await html2canvas(container, {
+      scale: 2, // Higher quality
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      windowWidth: container.scrollWidth,
+      scrollY: -window.scrollY,
+      onclone: (clonedDoc) => {
+        // Ensure all content is visible in the clone
+        const clonedEl = clonedDoc.body.querySelector('[data-pdf-container]') as HTMLElement;
+        if (clonedEl) {
+          clonedEl.style.overflow = 'visible';
+          clonedEl.style.maxHeight = 'none';
+        }
+      }
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.92);
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+
+    // A4 dimensions in pt
+    const pdf = new jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const margin = 36;
+    const headerH = 56;
+    const footerH = 48;
+    const contentWidth = pageWidth - margin * 2;
+    const contentTop = margin + headerH;
+    const contentMaxH = pageHeight - contentTop - footerH - margin;
+
+    // Scale image to fit page width
+    const scale = contentWidth / imgWidth;
+    const scaledHeight = imgHeight * scale;
+    const totalPages = Math.ceil(scaledHeight / contentMaxH);
+
+    const headerTitle = options?.headerTitle ?? "APIPAINEL.COM.BR";
+    const headerSubtitle =
+      options?.headerSubtitle ?? "Relatório Completo de Consulta CPF";
+    const nowStr = new Date().toLocaleString("pt-BR");
+
+    const addHeaderFooter = (pageNum: number) => {
+      // Header
+      pdf.setDrawColor(200);
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, margin + 44, pageWidth - margin, margin + 44);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.text(headerTitle, margin, margin + 18);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(9);
+      pdf.text(headerSubtitle, margin, margin + 34);
+
+      pdf.setFontSize(8);
+      pdf.text(nowStr, pageWidth - margin, margin + 18, { align: "right" });
+
+      // Footer
+      pdf.setDrawColor(200);
+      pdf.line(margin, pageHeight - margin - 36, pageWidth - margin, pageHeight - margin - 36);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7);
+      pdf.text(
+        `© ${new Date().getFullYear()} APIPAINEL.COM.BR — Todos os direitos reservados.`,
+        margin,
+        pageHeight - margin - 20
+      );
+      pdf.text(
+        `Página ${pageNum} de ${totalPages}`,
+        pageWidth - margin,
+        pageHeight - margin - 20,
+        { align: "right" }
+      );
+    };
+
+    for (let i = 0; i < totalPages; i++) {
+      if (i > 0) pdf.addPage();
+      addHeaderFooter(i + 1);
+
+      // Clip the portion of the image for this page
+      const sourceY = (i * contentMaxH) / scale;
+      const sourceH = Math.min(contentMaxH / scale, imgHeight - sourceY);
+      const destH = sourceH * scale;
+
+      // Create a temporary canvas for this page slice
+      const sliceCanvas = document.createElement("canvas");
+      sliceCanvas.width = imgWidth;
+      sliceCanvas.height = Math.ceil(sourceH);
+      const ctx = sliceCanvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(
+          canvas,
+          0, Math.floor(sourceY), imgWidth, Math.ceil(sourceH),
+          0, 0, imgWidth, Math.ceil(sourceH)
+        );
+        const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.92);
+        pdf.addImage(sliceData, "JPEG", margin, contentTop, contentWidth, destH);
+      }
+    }
+
+    pdf.save(filename);
+    toast.success("PDF visual exportado com sucesso!");
+  } catch (error) {
+    console.error("Erro ao gerar PDF visual:", error);
+    toast.error("Erro ao gerar PDF. Tente novamente.");
+  }
+};
+
+// --- Text-based PDF export (fallback) ---
+const exportTextPdf = (
   text: string,
   filename: string,
   options?: SectionActionButtonsProps["pdf"]
 ) => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
-
-  // Typography (built-in font, reliable)
   doc.setFont("helvetica", "normal");
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-
   const marginX = 48;
   const headerH = 72;
   const footerH = 70;
@@ -58,97 +182,51 @@ const exportPdf = (
   const maxWidth = pageWidth - marginX * 2;
 
   const headerTitle = options?.headerTitle ?? "APIPAINEL.COM.BR";
-  const headerSubtitle =
-    options?.headerSubtitle ?? "Relatório Completo de Consulta CPF";
-  const footerLines =
-    options?.footerLines ??
-    [
-      "Este relatório contém informações confidenciais e deve ser tratado com segurança e de acordo com a LGPD.",
-      `© ${new Date().getFullYear()} APIPAINEL.COM.BR — Todos os direitos reservados.`,
-    ];
-
+  const headerSubtitle = options?.headerSubtitle ?? "Relatório Completo de Consulta CPF";
+  const footerLines = options?.footerLines ?? [
+    "Este relatório contém informações confidenciais e deve ser tratado com segurança e de acordo com a LGPD.",
+    `© ${new Date().getFullYear()} APIPAINEL.COM.BR — Todos os direitos reservados.`,
+  ];
   const nowStr = new Date().toLocaleString("pt-BR");
 
   const addHeaderFooter = (pageNumber: number) => {
-    // Header
     doc.setDrawColor(220);
     doc.setLineWidth(1);
     doc.line(marginX, marginX + 54, pageWidth - marginX, marginX + 54);
-
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.text(headerTitle, marginX, marginX + 22);
-
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(headerSubtitle, marginX, marginX + 40);
-
     doc.setFontSize(9);
     doc.text(nowStr, pageWidth - marginX, marginX + 22, { align: "right" });
-
-    // Footer
     doc.setDrawColor(220);
-    doc.line(
-      marginX,
-      pageHeight - marginX - 44,
-      pageWidth - marginX,
-      pageHeight - marginX - 44
-    );
-
+    doc.line(marginX, pageHeight - marginX - 44, pageWidth - marginX, pageHeight - marginX - 44);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     const footerText = footerLines.join("\n");
     const footerWrapped = doc.splitTextToSize(footerText, maxWidth);
-    const footerStartY = pageHeight - marginX - 30;
-    doc.text(footerWrapped, marginX, footerStartY);
-
+    doc.text(footerWrapped, marginX, pageHeight - marginX - 30);
     doc.setFontSize(9);
-    doc.text(`Página ${pageNumber}`, pageWidth - marginX, pageHeight - marginX, {
-      align: "right",
-    });
+    doc.text(`Página ${pageNumber}`, pageWidth - marginX, pageHeight - marginX, { align: "right" });
   };
 
-  // Prepare content
-  const rawLines = text
-    .split(/\r?\n/)
-    .map((l) => l.trimEnd())
-    .filter((l) => l.trim().length > 0);
-
+  const rawLines = text.split(/\r?\n/).map((l) => l.trimEnd()).filter((l) => l.trim().length > 0);
   const isSeparator = (line: string) => /^-+$/.test(line.trim());
   const isSectionTitle = (line: string) => {
     const t = line.trim();
-    if (!t) return false;
-    if (isSeparator(t)) return false;
-    // Mostly uppercase, short-ish
+    if (!t || isSeparator(t)) return false;
     const letters = t.replace(/[^A-Za-zÀ-ÿ]/g, "");
     if (letters.length < 6) return false;
-    const upperRatio =
-      letters.length === 0
-        ? 0
-        : letters
-            .split("")
-            .filter((c) => c === c.toUpperCase())
-            .length / letters.length;
+    const upperRatio = letters.split("").filter((c) => c === c.toUpperCase()).length / letters.length;
     return upperRatio > 0.9 && t.length <= 44;
-  };
-
-  const drawParagraph = (
-    paragraph: string,
-    x: number,
-    y: number,
-    fontSize: number
-  ) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(fontSize);
-    const wrapped = doc.splitTextToSize(paragraph, maxWidth);
-    doc.text(wrapped, x, y);
-    return y + wrapped.length * (fontSize + 4);
   };
 
   let page = 1;
   addHeaderFooter(page);
-
   let cursorY = contentTop;
+
   const ensureSpace = (needed: number) => {
     if (cursorY + needed <= contentBottom) return;
     doc.addPage();
@@ -157,10 +235,8 @@ const exportPdf = (
     cursorY = contentTop;
   };
 
-  // Body
   rawLines.forEach((line) => {
     if (isSeparator(line)) return;
-
     if (isSectionTitle(line)) {
       ensureSpace(28);
       cursorY += 10;
@@ -173,19 +249,15 @@ const exportPdf = (
       cursorY += 10;
       return;
     }
-
-    // Label: value rows
     const idx = line.indexOf(":");
     if (idx > 0 && idx < 28) {
       const label = line.slice(0, idx + 1).trim();
       const value = line.slice(idx + 1).trim();
       ensureSpace(22);
-
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
       const labelW = doc.getTextWidth(label) + 6;
       doc.text(label, marginX, cursorY);
-
       doc.setFont("helvetica", "normal");
       const valueMaxW = Math.max(40, maxWidth - labelW);
       const wrappedVal = doc.splitTextToSize(value || "—", valueMaxW);
@@ -193,10 +265,12 @@ const exportPdf = (
       cursorY += wrappedVal.length * 14;
       return;
     }
-
-    // Normal paragraph
     ensureSpace(22);
-    cursorY = drawParagraph(line, marginX, cursorY, 10);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const wrapped = doc.splitTextToSize(line, maxWidth);
+    doc.text(wrapped, marginX, cursorY);
+    cursorY += wrapped.length * 14;
   });
 
   doc.save(filename);
@@ -207,6 +281,7 @@ const SectionActionButtons: React.FC<SectionActionButtonsProps> = ({
   filenameBase,
   pdf,
   labels,
+  visualContainerRef,
 }) => {
   const onCopy = async () => {
     const text = getText();
@@ -222,10 +297,16 @@ const SectionActionButtons: React.FC<SectionActionButtonsProps> = ({
     toast.success(labels?.exportedTxt ?? "TXT exportado com sucesso!");
   };
 
-  const onExportPdf = () => {
+  const onExportPdf = async () => {
+    // If a visual container ref is provided, use html2canvas capture
+    if (visualContainerRef?.current) {
+      await exportVisualPdf(visualContainerRef.current, `${filenameBase}.pdf`, pdf);
+      return;
+    }
+    // Fallback to text-based PDF
     const text = getText();
     if (!text) return;
-    exportPdf(text, `${filenameBase}.pdf`, pdf);
+    exportTextPdf(text, `${filenameBase}.pdf`, pdf);
     toast.success(labels?.exportedPdf ?? "PDF exportado com sucesso!");
   };
 
@@ -264,7 +345,7 @@ const SectionActionButtons: React.FC<SectionActionButtonsProps> = ({
         size="icon"
         onClick={onExportPdf}
         className="h-8 w-8 rounded-none border-l"
-        title="Exportar PDF"
+        title="Exportar PDF Visual"
       >
         <FileDown className="h-4 w-4" />
       </Button>
