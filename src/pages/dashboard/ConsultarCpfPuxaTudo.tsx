@@ -3090,6 +3090,7 @@ Todos os direitos reservados.`;
                        copied: "Relatório completo copiado!",
                        exportedTxt: "Relatório completo exportado com sucesso!",
                      }}
+                     visualContainerRef={resultRef}
                    />
                  </div>
               </div>
