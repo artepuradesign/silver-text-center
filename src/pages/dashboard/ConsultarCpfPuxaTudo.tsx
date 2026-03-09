@@ -2228,9 +2228,16 @@ const ConsultarCpfPuxaTudo: React.FC<ConsultarCpfPuxaTudoProps> = ({
       }
     };
 
-    const currentDate = new Date().toLocaleString("pt-BR");
+    const formatCurrencyForReport = (value: number | string | null | undefined) => {
+      if (value === null || value === undefined) return "N/A";
+      const num = typeof value === 'string' ? parseFloat(value) : value;
+      if (isNaN(num)) return String(value);
+      return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
 
-    return `------------------------------------
+    const currentDate = new Date().toLocaleString("pt-BR");
+    
+    let reportText = `------------------------------------
 APIPAINEL.COM.BR
 Relatório Completo de Consulta CPF
 ------------------------------------
@@ -2245,7 +2252,7 @@ DADOS BÁSICOS DO CIDADÃO
 CPF: ${formatCPF(result.cpf)}
 Nome Completo: ${formatValue(result.nome)?.toUpperCase()}
 Referência: ${formatValue(result.ref)?.toUpperCase()}
- Data de Nascimento: ${formatDateForReport(result.data_nascimento)}
+Data de Nascimento: ${formatDateForReport(result.data_nascimento)}
 Idade: ${formatValue(result.idade)} anos
 Sexo: ${formatValue(result.sexo)?.toUpperCase()}
 Gênero: ${formatValue(result.genero)?.toUpperCase()}
@@ -2295,7 +2302,7 @@ RG: ${formatValue(result.rg)}
 UF Emissão RG: ${formatValue(result.uf_emissao)?.toUpperCase()}
 
 CNH: ${formatValue(result.cnh)}
- Data Expedição CNH: ${formatDateForReport(result.dt_expedicao_cnh)}
+Data Expedição CNH: ${formatDateForReport(result.dt_expedicao_cnh)}
 
 Passaporte: ${formatValue(result.passaporte)?.toUpperCase()}
 CNS (Cartão SUS): ${formatValue(result.cns)}
@@ -2317,14 +2324,323 @@ Renda Estimada: ${formatValue(result.renda)}
 Faixa Poder Aquisitivo: ${formatValue(result.fx_poder_aquisitivo)?.toUpperCase()}
 
 CSB8: ${formatValue(result.csb8)}
-CSBA: ${formatValue(result.csba)}
+CSBA: ${formatValue(result.csba)}`;
+
+    // Seção: Receita Federal
+    if (receitaData) {
+      reportText += `
 
 ------------------------------------
 RECEITA FEDERAL DO BRASIL
 ------------------------------------
 
-${receitaData ? `CPF: ${formatCPF(receitaData.cpf)}
-Situação Cadastral: ${formatValue(receitaData.situacao_cadastral)?.toUpperCase()}` : 'Dados não disponíveis'}
+CPF: ${formatCPF(receitaData.cpf)}
+Situação Cadastral: ${formatValue(receitaData.situacao_cadastral)?.toUpperCase()}`;
+    }
+
+    // Seção: Telefones
+    if (result.telefones && Array.isArray(result.telefones) && result.telefones.length > 0) {
+      reportText += `
+
+------------------------------------
+TELEFONES (${result.telefones.length})
+------------------------------------
+`;
+      result.telefones.forEach((tel: any, idx: number) => {
+        reportText += `
+[Telefone ${idx + 1}]
+Número: ${formatValue(tel.numero || tel.telefone)}
+Tipo: ${formatValue(tel.tipo)?.toUpperCase()}
+Operadora: ${formatValue(tel.operadora)?.toUpperCase()}
+WhatsApp: ${tel.whatsapp ? 'SIM' : 'NÃO'}`;
+      });
+    }
+
+    // Seção: Emails
+    if (result.emails && Array.isArray(result.emails) && result.emails.length > 0) {
+      reportText += `
+
+------------------------------------
+EMAILS (${result.emails.length})
+------------------------------------
+`;
+      result.emails.forEach((email: any, idx: number) => {
+        reportText += `
+[Email ${idx + 1}]
+Email: ${formatValue(email.email || email.endereco)?.toLowerCase()}
+Tipo: ${formatValue(email.tipo)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Endereços
+    if (result.enderecos && Array.isArray(result.enderecos) && result.enderecos.length > 0) {
+      reportText += `
+
+------------------------------------
+ENDEREÇOS (${result.enderecos.length})
+------------------------------------
+`;
+      result.enderecos.forEach((end: any, idx: number) => {
+        reportText += `
+[Endereço ${idx + 1}]
+CEP: ${formatValue(end.cep)}
+Logradouro: ${formatValue(end.logradouro || end.endereco)?.toUpperCase()}
+Número: ${formatValue(end.numero)}
+Complemento: ${formatValue(end.complemento)?.toUpperCase()}
+Bairro: ${formatValue(end.bairro)?.toUpperCase()}
+Cidade: ${formatValue(end.cidade)?.toUpperCase()}
+UF: ${formatValue(end.uf)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Parentes
+    if (result.parentes && Array.isArray(result.parentes) && result.parentes.length > 0) {
+      reportText += `
+
+------------------------------------
+PARENTES/VÍNCULOS (${result.parentes.length})
+------------------------------------
+`;
+      result.parentes.forEach((parente: any, idx: number) => {
+        reportText += `
+[Parente ${idx + 1}]
+Nome: ${formatValue(parente.nome)?.toUpperCase()}
+CPF: ${parente.cpf ? formatCPF(parente.cpf) : 'N/A'}
+Parentesco: ${formatValue(parente.parentesco || parente.vinculo)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Empresas/Sociedades
+    if (result.empresas_socio && Array.isArray(result.empresas_socio) && result.empresas_socio.length > 0) {
+      reportText += `
+
+------------------------------------
+EMPRESAS/SOCIEDADES (${result.empresas_socio.length})
+------------------------------------
+`;
+      result.empresas_socio.forEach((empresa: any, idx: number) => {
+        reportText += `
+[Empresa ${idx + 1}]
+Razão Social: ${formatValue(empresa.razao_social || empresa.nome)?.toUpperCase()}
+CNPJ: ${formatValue(empresa.cnpj)}
+Participação: ${formatValue(empresa.participacao || empresa.percentual)}%
+Qualificação: ${formatValue(empresa.qualificacao)?.toUpperCase()}
+Data Entrada: ${formatDateForReport(empresa.data_entrada)}`;
+      });
+    }
+
+    // Seção: CNPJ MEI
+    if (result.cnpj_mei) {
+      reportText += `
+
+------------------------------------
+CNPJ MEI
+------------------------------------
+
+CNPJ: ${formatValue(result.cnpj_mei)}`;
+    }
+
+    // Seção: Dívidas Ativas
+    if (result.dividas_ativas && Array.isArray(result.dividas_ativas) && result.dividas_ativas.length > 0) {
+      reportText += `
+
+------------------------------------
+DÍVIDAS ATIVAS (${result.dividas_ativas.length})
+------------------------------------
+`;
+      result.dividas_ativas.forEach((divida: any, idx: number) => {
+        reportText += `
+[Dívida ${idx + 1}]
+Número: ${formatValue(divida.numero_inscricao || divida.numero)}
+Valor: ${formatCurrencyForReport(divida.valor)}
+Órgão: ${formatValue(divida.orgao)?.toUpperCase()}
+Situação: ${formatValue(divida.situacao)?.toUpperCase()}
+Data Inscrição: ${formatDateForReport(divida.data_inscricao)}`;
+      });
+    }
+
+    // Seção: Auxílio Emergencial
+    if (auxiliosEmergenciais && Array.isArray(auxiliosEmergenciais) && auxiliosEmergenciais.length > 0) {
+      reportText += `
+
+------------------------------------
+AUXÍLIO EMERGENCIAL (${auxiliosEmergenciais.length})
+------------------------------------
+`;
+      auxiliosEmergenciais.forEach((auxilio: any, idx: number) => {
+        reportText += `
+[Parcela ${idx + 1}]
+Mês/Ano: ${formatValue(auxilio.mes)}/${formatValue(auxilio.ano)}
+Valor: ${formatCurrencyForReport(auxilio.valor)}
+Parcela: ${formatValue(auxilio.parcela)}`;
+      });
+    }
+
+    // Seção: RAIS (Histórico Trabalhista)
+    if (rais && Array.isArray(rais) && rais.length > 0) {
+      reportText += `
+
+------------------------------------
+HISTÓRICO TRABALHISTA - RAIS (${rais.length})
+------------------------------------
+`;
+      rais.forEach((registro: any, idx: number) => {
+        reportText += `
+[Registro ${idx + 1}]
+Empresa: ${formatValue(registro.razao_social || registro.empresa)?.toUpperCase()}
+CNPJ: ${formatValue(registro.cnpj)}
+Cargo: ${formatValue(registro.cbo || registro.cargo)?.toUpperCase()}
+Salário: ${formatCurrencyForReport(registro.remuneracao || registro.salario)}
+Admissão: ${formatDateForReport(registro.data_admissao)}
+Desligamento: ${formatDateForReport(registro.data_desligamento)}
+Ano Referência: ${formatValue(registro.ano)}`;
+      });
+    }
+
+    // Seção: INSS
+    if (result.inss_dados && Array.isArray(result.inss_dados) && result.inss_dados.length > 0) {
+      reportText += `
+
+------------------------------------
+INSS - PREVIDÊNCIA SOCIAL (${result.inss_dados.length})
+------------------------------------
+`;
+      result.inss_dados.forEach((inss: any, idx: number) => {
+        reportText += `
+[Registro ${idx + 1}]
+NIT: ${formatValue(inss.nit)}
+Tipo: ${formatValue(inss.tipo)?.toUpperCase()}
+Situação: ${formatValue(inss.situacao)?.toUpperCase()}
+Valor: ${formatCurrencyForReport(inss.valor)}`;
+      });
+    }
+
+    // Seção: Vacinas COVID
+    if (result.vacinas_covid && Array.isArray(result.vacinas_covid) && result.vacinas_covid.length > 0) {
+      reportText += `
+
+------------------------------------
+VACINAS COVID-19 (${result.vacinas_covid.length})
+------------------------------------
+`;
+      result.vacinas_covid.forEach((vacina: any, idx: number) => {
+        reportText += `
+[Dose ${idx + 1}]
+Vacina: ${formatValue(vacina.vacina || vacina.nome)?.toUpperCase()}
+Fabricante: ${formatValue(vacina.fabricante)?.toUpperCase()}
+Lote: ${formatValue(vacina.lote)}
+Data Aplicação: ${formatDateForReport(vacina.data_aplicacao || vacina.data)}
+Local: ${formatValue(vacina.local || vacina.estabelecimento)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Operadora VIVO
+    if (result.operadora_vivo && Array.isArray(result.operadora_vivo) && result.operadora_vivo.length > 0) {
+      reportText += `
+
+------------------------------------
+OPERADORA VIVO (${result.operadora_vivo.length})
+------------------------------------
+`;
+      result.operadora_vivo.forEach((linha: any, idx: number) => {
+        reportText += `
+[Linha ${idx + 1}]
+Número: ${formatValue(linha.numero || linha.telefone)}
+Plano: ${formatValue(linha.plano)?.toUpperCase()}
+Status: ${formatValue(linha.status)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Operadora CLARO
+    if (result.operadora_claro && Array.isArray(result.operadora_claro) && result.operadora_claro.length > 0) {
+      reportText += `
+
+------------------------------------
+OPERADORA CLARO (${result.operadora_claro.length})
+------------------------------------
+`;
+      result.operadora_claro.forEach((linha: any, idx: number) => {
+        reportText += `
+[Linha ${idx + 1}]
+Número: ${formatValue(linha.numero || linha.telefone)}
+Plano: ${formatValue(linha.plano)?.toUpperCase()}
+Status: ${formatValue(linha.status)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Operadora TIM
+    if (result.operadora_tim && Array.isArray(result.operadora_tim) && result.operadora_tim.length > 0) {
+      reportText += `
+
+------------------------------------
+OPERADORA TIM (${result.operadora_tim.length})
+------------------------------------
+`;
+      result.operadora_tim.forEach((linha: any, idx: number) => {
+        reportText += `
+[Linha ${idx + 1}]
+Número: ${formatValue(linha.numero || linha.telefone)}
+Plano: ${formatValue(linha.plano)?.toUpperCase()}
+Status: ${formatValue(linha.status)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Senhas Vazadas (Email)
+    if (result.senhas_vazadas_email && Array.isArray(result.senhas_vazadas_email) && result.senhas_vazadas_email.length > 0) {
+      reportText += `
+
+------------------------------------
+SENHAS VAZADAS - EMAIL (${result.senhas_vazadas_email.length})
+------------------------------------
+`;
+      result.senhas_vazadas_email.forEach((vazamento: any, idx: number) => {
+        reportText += `
+[Vazamento ${idx + 1}]
+Email: ${formatValue(vazamento.email)?.toLowerCase()}
+Senha: ${formatValue(vazamento.senha)}
+Fonte: ${formatValue(vazamento.fonte || vazamento.source)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Senhas Vazadas (CPF)
+    if (result.senhas_vazadas_cpf && Array.isArray(result.senhas_vazadas_cpf) && result.senhas_vazadas_cpf.length > 0) {
+      reportText += `
+
+------------------------------------
+SENHAS VAZADAS - CPF (${result.senhas_vazadas_cpf.length})
+------------------------------------
+`;
+      result.senhas_vazadas_cpf.forEach((vazamento: any, idx: number) => {
+        reportText += `
+[Vazamento ${idx + 1}]
+Login: ${formatValue(vazamento.login || vazamento.cpf)}
+Senha: ${formatValue(vazamento.senha)}
+Fonte: ${formatValue(vazamento.fonte || vazamento.source)?.toUpperCase()}`;
+      });
+    }
+
+    // Seção: Histórico de Veículos
+    if (result.historico_veiculos && Array.isArray(result.historico_veiculos) && result.historico_veiculos.length > 0) {
+      reportText += `
+
+------------------------------------
+HISTÓRICO DE VEÍCULOS (${result.historico_veiculos.length})
+------------------------------------
+`;
+      result.historico_veiculos.forEach((veiculo: any, idx: number) => {
+        reportText += `
+[Veículo ${idx + 1}]
+Placa: ${formatValue(veiculo.placa)?.toUpperCase()}
+Renavam: ${formatValue(veiculo.renavam)}
+Marca/Modelo: ${formatValue(veiculo.marca_modelo || veiculo.modelo)?.toUpperCase()}
+Ano: ${formatValue(veiculo.ano_fabricacao)}/${formatValue(veiculo.ano_modelo)}
+Cor: ${formatValue(veiculo.cor)?.toUpperCase()}
+Situação: ${formatValue(veiculo.situacao)?.toUpperCase()}`;
+      });
+    }
+
+    // Finalização do relatório
+    reportText += `
 
 ------------------------------------
 INFORMAÇÕES COMPLEMENTARES
@@ -2332,7 +2648,7 @@ INFORMAÇÕES COMPLEMENTARES
 
 Fonte dos Dados: ${formatValue(result.fonte_dados)?.toUpperCase()}
 Qualidade dos Dados: ${result.qualidade_dados ? `${result.qualidade_dados}%` : 'N/A'}
- Última Atualização: ${formatDateForReport(result.ultima_atualizacao)}
+Última Atualização: ${formatDateForReport(result.ultima_atualizacao)}
 
 ------------------------------------
 FIM DO RELATÓRIO
@@ -2346,6 +2662,8 @@ segurança e de acordo com a LGPD
 
 © ${new Date().getFullYear()} APIPAINEL.COM.BR
 Todos os direitos reservados.`;
+
+    return reportText;
   };
 
   const handleExport = () => {
