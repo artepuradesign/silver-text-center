@@ -171,7 +171,7 @@ const MenuSuperior = () => {
                         Cadastre-se
                       </span>
                       <LiquidGlassButton
-                        variant="primary"
+                        variant="outline"
                         className="text-sm px-4 py-2"
                         onClick={() => navigate('/login')}
                         ariaLabel="Entrar"
